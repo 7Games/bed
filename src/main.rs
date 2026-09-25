@@ -51,12 +51,16 @@ impl Editor {
     }
 
     /// Prints the current line
-    fn print(&self) {
+    fn print(&self, display_line_number: bool) {
+        if display_line_number {
+            print!("{}\t", self.line_number + 1);
+        }
+
         println!("{}", self.lines[self.line_number]);
     }
 
     /// Print all the lines in range of `from`-`to`
-    fn print_range(&self, from: usize, to: usize) {
+    fn print_range(&self, from: usize, to: usize, display_line_number: bool) {
         if from > to {
             println!("?");
             return;
@@ -66,6 +70,9 @@ impl Editor {
             if i > self.lines.len() {
                 println!("?");
             } else {
+                if display_line_number {
+                    print!("{}\t", i + 1);
+                }
                 println!("{}", self.lines[i]);
             }
         }
