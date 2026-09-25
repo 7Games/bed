@@ -125,19 +125,53 @@ fn main() {
         input.clear();
         let _ = stdin.read_line(input);
 
-        match input.as_str().trim() {
-            "" => {
-                editor.goto_line(editor.line_number + 1);
-                editor.print();
-            }
-            "p" => editor.print(),
-            ",p" => editor.print_range(0, editor.lines.len()),
-            &_ => {
-                if is_number(input.trim()) {
-                    editor.goto_line(input.trim().parse::<usize>().unwrap());
-                    editor.print();
-                } else {
-                    println!("?");
+        match editor.mode {
+            EditorMode::Command => {
+                match input.as_str().trim() {
+                    // Goto next line (enter key technically but it's nothing because it's trimmed)
+                    "" => {
+                        editor.goto_line(editor.line_number + 1);
+                        editor.print(false);
+                    }
+                    // Print
+                    "p" => editor.print(false),
+                    ",p" => editor.print_range(0, editor.lines.len(), false),
+                    // Print with line numbers
+                    "n" => editor.print(true),
+                    ",n" => editor.print_range(0, editor.lines.len(), true),
+                    // Insert
+                    "i" => {
+                        editor.line_number += 1;
+                        editor.mode = EditorMode::Insert;
+                    },
+                    "a" => editor.mode = EditorMode::Insert,
+                    // Assume number?
+                    &_ => {
+                        if is_number(input.trim()) {
+                            if input.trim() == "0" {
+                                println!("?");
+                                continue;
+                            }
+                            editor.goto_line(input.trim().parse::<usize>().unwrap() - 1);
+                            editor.print(false);
+                        } else {
+                            println!("?");
+                        }
+                    },
+                }
+            },
+            EditorMode::Insert => {
+                match input.as_str().trim() {
+                    // Exit input mode
+                    "." => {
+                        editor.mode = EditorMode::Command;
+                    }
+                    // Insert as is (except trimmed ig)
+                    &_ => {
+                        // TODO: Not trimmed? Maybe just get rid of \n
+                        editor.insert_text(editor.line_number, input.trim());
+                        editor.line_number += 1;
+                    },
                 }
             },
         }
