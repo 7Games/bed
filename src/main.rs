@@ -93,14 +93,14 @@ impl Editor {
 
     /// Moves [`Self::line_number`] to `new_line`
     ///
-    /// Technically it's `new_line` - 1 because [`Self::line_number`] is 0-indexed
+    /// Remember! [`Self::line_number`] is 0-indexed!
     fn goto_line(&mut self, new_line: usize) {
-        if new_line - 1 > self.lines.len() {
+        if new_line > self.lines.len() {
             println!("?");
             return;
         }
 
-        self.line_number = new_line - 1;
+        self.line_number = new_line;
     }
 }
 
