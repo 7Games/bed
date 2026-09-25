@@ -50,6 +50,19 @@ impl Editor {
         }
     }
 
+    /// Inserts a line of text into the `line_number` at [`Self::lines`]
+    ///
+    /// Creates a new line at line_number (0-indexed, you must do this
+    /// before passing), and fills it with `line`.
+    fn insert_text(&mut self, line_number: usize, line: &str) {
+        if line_number > self.lines.len() {
+            println!("?");
+            return;
+        }
+
+        self.lines.insert(line_number, line.to_string());
+    }
+
     /// Prints the current line
     fn print(&self, display_line_number: bool) {
         if display_line_number {
